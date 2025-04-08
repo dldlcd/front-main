@@ -1,0 +1,21 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+.homeTitleBox {
+    display: flex;
+    align-items: flex-end;
+}
+.homeTitleBox > .homeTitleBtnBox{
+    display: flex;
+    flex-direction: row;
+    gap: 20px;
+}
+.homeTitleBox .homeTitleBtnBox .btn {
+margin-left: unset !important;
+}
+.homeTitleBox .homeTitleImgBox{
+    display: flex;
+    flex-direction: row;
+    gap: 20px;
+}
