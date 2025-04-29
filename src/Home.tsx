@@ -10,15 +10,6 @@ import { Input } from "@/components/ui/input";
 import "./index.css";
 import { useNavigate, useLocation } from 'react-router-dom';
 
-interface Outfit { 
-  id: number;
-  imageUrl: string;
-  description: string;
-  likes: number;
-  liked: boolean;
-  type?: string; // DesignApproach용
-}
-
 const navigationLinks = [
   { name: "Home", href: "/" },
   { name: "Collections", href: "/collection" },
@@ -47,50 +38,6 @@ export default function Home() {
   const handleReadMore = () => navigate('/collection');
   const token = localStorage.getItem("token");
 
-  const [outfits, setOutfits] = useState<Outfit[]>([]);
-
-
-  const fetchOutfits = async () => {
-    const token = localStorage.getItem("token");
-    if (!token) return;
-
-    const res = await fetch("http://localhost:8080/api/auth/mypage", {
-      headers: { Authorization: `Bearer ${token}` },
-    });
-
-    if (res.ok) {
-      const data = await res.json();
-      setOutfits(data);
-    }
-  };
-
-  const toggleLike = async (id: number) => {
-    const token = localStorage.getItem("token");
-    if (!token) return;
-
-    const res = await fetch(`http://localhost:8080/api/auth/like/${id}`, {
-      method: "PUT",
-      headers: { Authorization: `Bearer ${token}` },
-    });
-
-    if (res.ok) {
-      setOutfits((prev) =>
-        prev.map((item) =>
-          item.id === id
-            ? {
-                ...item,
-                liked: !item.liked,
-                likes: item.liked ? item.likes - 1 : item.likes + 1,
-              }
-            : item
-        )
-      );
-    }
-  };
-
-  useEffect(() => {
-    fetchOutfits();
-  }, []);
 
   useEffect(() => {
     // ✅ 1. URL에서 token 쿼리 파라미터 추출
@@ -245,14 +192,14 @@ export default function Home() {
 
         <main className="w-full">
           <section className="mt-[100px] ">
-          <DesignApproachSection outfits={outfits} onToggleLike={toggleLike} />
+            <DesignApproachSection />
           </section>
 
           <section className="mt-[100px]">
           <h2 className="text-5xl font-bold leading-[75px] text-black tracking-wide ml-8">
                 My<br /> COLLECTION
                 </h2>
-                <CollectionSection outfits={outfits} />
+          <CollectionSection />
           </section>
 
           <section className="px-[69px] mt-[50px]">

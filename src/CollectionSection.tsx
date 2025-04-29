@@ -71,7 +71,7 @@ export default function CollectionSection({ className }: CollectionSectionProps)
                 <CardContent className="p-0">
                 <img
                     src={
-                      `http://localhost:8080${outfit.imageUrl}`
+                      `http://localhost:8080${outfit.imageUrl}` 
                     }
                     alt="Outfit"
                     className="w-full h-60 object-cover"
