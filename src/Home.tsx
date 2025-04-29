@@ -1,5 +1,5 @@
 // src/Home.tsx
-import React from "react";
+import { useEffect, useState } from "react";
 import { Search, ShoppingBag, User, LogIn, LogOut } from "lucide-react";
 import CollectionSection from "./CollectionSection";
 import DesignApproachSection from "./DesignApproachSection";
@@ -8,7 +8,16 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import "./index.css";
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
+
+interface Outfit { 
+  id: number;
+  imageUrl: string;
+  description: string;
+  likes: number;
+  liked: boolean;
+  type?: string; // DesignApproach용
+}
 
 const navigationLinks = [
   { name: "Home", href: "/" },
@@ -30,14 +39,81 @@ const colorOptions = [
 
 export default function Home() {
   const navigate = useNavigate();
+  const location = useLocation(); // 👈 URL에서 ?token=... 감지
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
   const goCart = () => navigate('/cart');
   const goMyPage = () => navigate('/mypage');
   const goSignIn = () => navigate('/signin');
   const handleReadMore = () => navigate('/collection');
   const token = localStorage.getItem("token");
 
+  const [outfits, setOutfits] = useState<Outfit[]>([]);
+
+
+  const fetchOutfits = async () => {
+    const token = localStorage.getItem("token");
+    if (!token) return;
+
+    const res = await fetch("http://localhost:8080/api/auth/mypage", {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+
+    if (res.ok) {
+      const data = await res.json();
+      setOutfits(data);
+    }
+  };
+
+  const toggleLike = async (id: number) => {
+    const token = localStorage.getItem("token");
+    if (!token) return;
+
+    const res = await fetch(`http://localhost:8080/api/auth/like/${id}`, {
+      method: "PUT",
+      headers: { Authorization: `Bearer ${token}` },
+    });
+
+    if (res.ok) {
+      setOutfits((prev) =>
+        prev.map((item) =>
+          item.id === id
+            ? {
+                ...item,
+                liked: !item.liked,
+                likes: item.liked ? item.likes - 1 : item.likes + 1,
+              }
+            : item
+        )
+      );
+    }
+  };
+
+  useEffect(() => {
+    fetchOutfits();
+  }, []);
+
+  useEffect(() => {
+    // ✅ 1. URL에서 token 쿼리 파라미터 추출
+    const params = new URLSearchParams(location.search);
+    const tokenFromURL = params.get("token");
+
+    // ✅ 2. token 있으면 저장 + 로그인 상태 true
+    if (tokenFromURL) {
+      localStorage.setItem("token", tokenFromURL);
+      setIsLoggedIn(true);
+      // ✅ 3. 주소 깔끔하게 정리
+      window.history.replaceState({}, document.title, "/");
+    } else {
+      const tokenFromStorage = localStorage.getItem("token");
+      setIsLoggedIn(!!tokenFromStorage);
+    }
+  }, [location]);
+
+
   const handleLogout = () => {
     localStorage.removeItem("token");
+    setIsLoggedIn(false);
+    alert("로그아웃 되었습니다!");
     navigate("/signin");
   };
 
@@ -84,29 +160,25 @@ export default function Home() {
                 </div>
               </Button>
 
-              {localStorage.getItem("token") ? (
-                  <Button
-                    onClick={() => {
-                      localStorage.removeItem("token");
-                      alert("로그아웃 되었습니다!");
-                      navigate("/");
-                    }}
-                    variant="default"
-                    size="icon"
-                    className="w-[50px] h-[50px] rounded-[25px] bg-black"
-                  >
-                    <LogOut className="h-[30px] w-[30px] text-white" />
-                  </Button>
-                ) : (
-                  <Button
-                    onClick={goSignIn}
-                    variant="default"
-                    size="icon"
-                    className="w-[50px] h-[50px] rounded-[25px] bg-black"
-                  >
-                    <LogIn className="h-[30px] w-[30px] text-white" />
-                  </Button>
-                )}
+              {isLoggedIn ? (
+                <Button
+                  onClick={handleLogout}
+                  variant="default"
+                  size="icon"
+                  className="w-[50px] h-[50px] rounded-[25px] bg-black"
+                >
+                  <LogOut className="h-[30px] w-[30px] text-white" />
+                </Button>
+              ) : (
+                <Button
+                  onClick={goSignIn}
+                  variant="default"
+                  size="icon"
+                  className="w-[50px] h-[50px] rounded-[25px] bg-black"
+                >
+                  <LogIn className="h-[30px] w-[30px] text-white" />
+                </Button>
+              )}
             </div>
           </div>
 
@@ -132,7 +204,7 @@ export default function Home() {
               </div>
 
               <div>
-                <h2 className="text-5xl font-bold leading-[75px] text-black tracking-wide">
+                <h2 className="text-5xl font-bold leading-[75px] text-black tracking-wide ">
                   NEW<br />COLLECTION
                 </h2>
                 <p className="mt-10 text-lg text-black tracking-wide">
@@ -172,12 +244,15 @@ export default function Home() {
         </header>
 
         <main className="w-full">
-          <section className="mt-[100px]">
-            <DesignApproachSection />
+          <section className="mt-[100px] ">
+          <DesignApproachSection outfits={outfits} onToggleLike={toggleLike} />
           </section>
 
           <section className="mt-[100px]">
-            <CollectionSection />
+          <h2 className="text-5xl font-bold leading-[75px] text-black tracking-wide ml-8">
+                My<br /> COLLECTION
+                </h2>
+                <CollectionSection outfits={outfits} />
           </section>
 
           <section className="px-[69px] mt-[50px]">

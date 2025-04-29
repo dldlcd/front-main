@@ -8,6 +8,9 @@ import Cart from "./Cart";
 import MyPage from "./MyPage";
 import SignIn from "./SignIn";
 import SignUp from "./SignUp";
+import AddOutfit from "./addoutfit";
+import MyProfile from "./Profile";
+
 
 const App = () => {
   return (
@@ -18,6 +21,8 @@ const App = () => {
       <Route path="/mypage" element={<MyPage />} />
       <Route path="/signin" element={<SignIn />} />
       <Route path="/signup" element={<SignUp />} />
+      <Route path="/add" element={<AddOutfit />} />
+      <Route path="/add" element={<MyProfile />} />
     </Routes>
   );
 };

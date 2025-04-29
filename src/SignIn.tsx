@@ -31,6 +31,7 @@ export default function SignIn() {
       const data = await response.json();
       localStorage.setItem("token", data.token);
       setSuccess("로그인 성공!");
+      alert( id + "님 로그인 되었습니다!");
       navigate("/");
     } catch (err) {
       setError("아이디 또는 비밀번호가 틀렸습니다.");
@@ -135,7 +136,7 @@ export default function SignIn() {
 
             <Separator className="my-5" />
 
-            <Button variant="outline" className="w-full mb-3">
+            <Button variant="outline" className="w-full">
               Continue with Google
             </Button>
             <Button variant="outline" className="w-full">
