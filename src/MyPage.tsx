@@ -7,17 +7,31 @@ import MyProfile from "./Profile";
 
 
 
+
 interface Outfit {
   id: number;
-  imageUrl: string;
+  title: string;
   description: string;
-  liked: boolean;
+  imageUrl: string;
+  color: string;
+  season: string;
+  situation: string;
+  style: string;
   likes: number;
+  liked: boolean;
+  userId: number;
+  userNickname: string;
+  userProfileImage: string; // 백엔드에서 포함되도록 수정 필요
 }
+
 
 export default function MyPage() {
   const [outfits, setOutfits] = useState<Outfit[]>([]);
   const navigate = useNavigate();
+
+  const [selectedOutfit, setSelectedOutfit] = useState<Outfit | null>(null);
+  const openModal = (outfit: Outfit) => setSelectedOutfit(outfit);
+  const closeModal = () => setSelectedOutfit(null);
 
 
   
@@ -104,22 +118,26 @@ export default function MyPage() {
           {outfits.map((outfit) => (
             <div
               key={outfit.id}
-              className="aspect-[3.6/4] overflow-hidden relative bg-black"
+              onClick={() => navigate(`/outfit/${outfit.id}`)}
+              className="aspect-[3.6/4] overflow-hidden relative bg-black cursor-pointer"
             >
               <img
                 src={`http://localhost:8080${outfit.imageUrl}`}
                 alt="Outfit"
                 className="w-full h-full object-cover object-center"
-                
               />
-              
             </div>
           ))}
         </div>
 
+
+        
+          
+        </div>
+
         
         {/* 하단 버튼 바 */}
-        <div className="shadow-[0_-4px_12px_rgba(0,0,0,0.20)] fixed bottom-0 left-0 right-0 w-full flex justify-between items-center max-w-[650px] mx-auto bg-white border-t shadow-md px-10 py-4 z-50">
+        <div className="shadow-[0_-4px_12px_rgba(0,0,0,0.20)] fixed bottom-0 left-0 right-0 w-full flex justify-between items-center max-w-[650px] mx-auto bg-white border-t shadow-md px-10 py-5 z-50">
 
 
 
@@ -139,7 +157,7 @@ export default function MyPage() {
         </div>
       </div>
     </div>
-    </div>
+    
     
   );
 }

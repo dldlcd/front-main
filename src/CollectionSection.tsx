@@ -70,6 +70,7 @@ export default function CollectionSection({ className }: CollectionSectionProps)
               <Card className="border-none shadow-none">
                 <CardContent className="p-0">
                 <img
+                onClick={() => navigate(`/outfit/${outfit.id}`)}
                     src={
                       `http://localhost:8080${outfit.imageUrl}` 
                     }

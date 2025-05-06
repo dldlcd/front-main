@@ -28,12 +28,44 @@ const colorOptions = [
   { color: "#eae8d9", border: true, label: "+2" },
 ];
 
+
 export default function Home() {
+
+  const [myId, setMyId] = useState<number | null>(null);
+
+useEffect(() => {
+  const token = localStorage.getItem("token");
+  if (!token) return;
+
+  const fetchUserId = async () => {
+    try {
+      const res = await fetch("http://localhost:8080/api/auth/me", {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      const data = await res.json();
+      setMyId(data.id); // 로그인한 사용자 ID 저장
+    } catch (err) {
+      console.error("사용자 ID 조회 실패:", err);
+    }
+  };
+
+  fetchUserId();
+}, []);
+
+
   const navigate = useNavigate();
   const location = useLocation(); // 👈 URL에서 ?token=... 감지
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const goCart = () => navigate('/cart');
-  const goMyPage = () => navigate('/mypage');
+  const goUserPage = () => {
+    if (myId) {
+      navigate(`/user/${myId}`);
+    } else {
+      alert("로그인이 필요합니다.");
+    }
+  };
   const goSignIn = () => navigate('/signin');
   const handleReadMore = () => navigate('/collection');
   const token = localStorage.getItem("token");
@@ -97,7 +129,7 @@ export default function Home() {
               </Button>
 
               <Button
-                onClick={goMyPage}
+                onClick={goUserPage}
                 variant="default"
                 size="icon"
                 className="w-[50px] h-[50px] rounded-[25px] bg-black"

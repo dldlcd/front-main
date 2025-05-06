@@ -18,77 +18,12 @@ interface CollectionSectionProps {
   className?: string;
 }
 
-const newThisWeekProducts: Outfit[]  = [
-  {
-    id: 1009,
-    imageUrl: "/image-19.png", // Using placeholder paths as per original
-    type: "V-Neck T-Shirt",
-    description: "Embroidered Seersucker Shirt",
-    likes: 1,
-    liked: true
-  },
-  {
-    id: 1010,
-    imageUrl: "/image-20.png",
-    type: "Cotton T Shirt",
-    description: "Basic Slim Fit T-shirt",
-    likes: 1,
-    liked: true
-  },
-  {
-    id: 1011,
-    imageUrl: "/image-22.png",
-    type: "Henley T-Shirt",
-    description: "Blurred Print T-Shirt",
-    likes: 20,
-    liked: true
-  },
-  {
-    id: 1012,
-    imageUrl: "/image-21.png",
-    type: "Crewneck T-Shirt",
-    description: "Full Sleeve Zipper",
-    likes: 10,
-    liked: true
-  },
-  {
-    id: 1013,
-    imageUrl: "/image-25.png",
-    type: "Crewneck T-Shirt",
-    description: "Full Sleeve Zipper",
-    likes: 33,
-    liked: true
-  },
-  {
-    id: 1014,
-    imageUrl: "/image-27.png",
-    type: "Crewneck T-Shirt",
-    description: "Full Sleeve Zipper",
-    likes: 44,
-    liked: true
-  },
-  {
-    id: 1015,
-    imageUrl: "/image-28.png",
-    type: "Crewneck T-Shirt",
-    description: "Full Sleeve Zipper",
-    likes: 50,
-    liked: true
-  },
-  {
-    id: 1016,
-    imageUrl: "/image-29.png",
-    type: "Crewneck T-Shirt",
-    description: "Full Sleeve Zipper",
-    likes: 11,
-    liked: true
-  },
-];
+
 
 export default function DesignApproachSection(): React.JSX.Element {
   // Product data for "NEW THIS WEEK" section
 
-  const [outfits, setOutfits] = useState<Outfit[]>(newThisWeekProducts);
+  const [outfits, setOutfits] = useState<Outfit[]>([]);
   const navigate = useNavigate();
 
   const [page, setPage] = useState(0);
@@ -245,7 +180,9 @@ export default function DesignApproachSection(): React.JSX.Element {
           >
             <CardContent className="p-0 relative">
               <div className="relative">
+                
                 <img
+                  onClick={() => navigate(`/outfit/${outfit.id}`)}
                   src={`http://localhost:8080${outfit.imageUrl}`}
                   alt={outfit.description}
                   className="w-full h-[313px] object-cover"

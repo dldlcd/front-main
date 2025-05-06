@@ -10,7 +10,8 @@ import SignIn from "./SignIn";
 import SignUp from "./SignUp";
 import AddOutfit from "./addoutfit";
 import MyProfile from "./Profile";
-
+import OutfitDetail from "./OutfitDetail";
+import UserPage from "./UserPage";
 
 const App = () => {
   return (
@@ -23,6 +24,8 @@ const App = () => {
       <Route path="/signup" element={<SignUp />} />
       <Route path="/add" element={<AddOutfit />} />
       <Route path="/add" element={<MyProfile />} />
+      <Route path="/outfit/:id" element={<OutfitDetail />} />
+      <Route path="/user/:userId" element={<UserPage />} />
     </Routes>
   );
 };
