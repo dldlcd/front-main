@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import MyProfile from "./Profile";
 
 interface Profile {
+  id: number;
   nickname: string;
   gender: string;
   ageGroup: string;
@@ -11,6 +12,7 @@ interface Profile {
   preferredStyles: string[];
   profileImage: string;
   bio: string;
+  
 }
 
 interface Outfit {
@@ -60,7 +62,8 @@ export default function UserPage() {
       <div className="w-full max-w-[650px] bg-white px-0">
         {/* 프로필 섹션 */}
         <div className="px-4 pb-4">
-          <MyProfile />
+        <MyProfile profile={profile} userId={profile.userId?.toString()} />
+
         </div>
 
         {/* 탭 버튼 */}
@@ -83,22 +86,48 @@ export default function UserPage() {
         </div>
 
         <div className="w-full max-w-screen-xl py-0.5">
-          {/* 🟦 피드 카드 */}
-          <div className="grid grid-cols-3 gap-[1px]">
-            {outfits.map((outfit) => (
-              <div
-                key={outfit.id}
-                onClick={() => navigate(`/outfit/${outfit.id}`)}
-                className="aspect-[3.6/4] overflow-hidden relative bg-black cursor-pointer"
+          {outfits.length === 0 ? (
+            <div className="w-full flex flex-col items-center justify-center pt-45 pb-40 py-20 text-center text-gray-400">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                className="h-16 w-16 mb-4 text-gray-300"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+                strokeWidth={1.2}
               >
-                <img
-                  src={`http://localhost:8080${outfit.imageUrl}`}
-                  alt="Outfit"
-                  className="w-full h-full object-cover object-center"
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M3 7l9 6 9-6M4 19h16M4 15h16"
                 />
-              </div>
-            ))}
-          </div>
+              </svg>
+              <h2 className="text-lg font-semibold text-gray-500 mb-2">
+                아직 등록된 게시물이 없습니다
+              </h2>
+              {userId === myId && (
+                <p className="text-sm text-gray-400">
+                  첫 번째 코디를 등록해보세요 ✨
+                </p>
+              )}
+            </div>
+          ) : (
+            <div className="grid grid-cols-3 gap-[1px]">
+              {outfits.map((outfit) => (
+                <div
+                  key={outfit.id}
+                  onClick={() => navigate(`/outfit/${outfit.id}`)}
+                  className="aspect-[3.6/4] overflow-hidden relative bg-black cursor-pointer"
+                >
+                  <img
+                    src={`http://localhost:8080${outfit.imageUrl}`}
+                    alt="Outfit"
+                    className="w-full h-full object-cover object-center"
+                  />
+                </div>
+              ))}
+            </div>
+          )}
         </div>
 
         {/* 하단 버튼 바 */}

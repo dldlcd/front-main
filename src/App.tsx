@@ -3,6 +3,7 @@ import React from "react";
 import { Routes, Route } from "react-router-dom";
 
 import Home from "./Home";
+import Collections from "./Collections";
 import CollectionDetail from "./CollectionDetail";
 import Cart from "./Cart";
 import MyPage from "./MyPage";
@@ -17,13 +18,14 @@ const App = () => {
   return (
     <Routes>
       <Route path="/" element={<Home />} />
-      <Route path="/collection" element={<CollectionDetail />} />
+      <Route path="/collections" element={<Collections />} />
+      <Route path="/collection/:id" element={<CollectionDetail />} />
       <Route path="/cart" element={<Cart />} />
       <Route path="/mypage" element={<MyPage />} />
       <Route path="/signin" element={<SignIn />} />
       <Route path="/signup" element={<SignUp />} />
       <Route path="/add" element={<AddOutfit />} />
-      <Route path="/add" element={<MyProfile />} />
+      <Route path="/profile" element={<MyProfile />} />
       <Route path="/outfit/:id" element={<OutfitDetail />} />
       <Route path="/user/:userId" element={<UserPage />} />
     </Routes>

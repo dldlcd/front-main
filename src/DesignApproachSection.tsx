@@ -164,7 +164,7 @@ export default function DesignApproachSection(): React.JSX.Element {
         <div className="font-extrabold text-5xl tracking-[2.00px] leading-10 ">
           NEW
           <br />
-          THIS WEEK
+          THIS MONTH
         </div>
         <div className="font-extrabold text-[#000d8a] text-xl tracking-[2.00px] leading-10 whitespace-nowrap">
           

@@ -1,6 +1,6 @@
 // src/Home.tsx
 import { useEffect, useState } from "react";
-import { Search, ShoppingBag, User, LogIn, LogOut } from "lucide-react";
+import { Search, ShoppingBag, User, LogIn, LogOut, Home as HomeIcon, Heart, MessageCircle, Bookmark, PlusSquare, Compass } from "lucide-react";
 import CollectionSection from "./CollectionSection";
 import DesignApproachSection from "./DesignApproachSection";
 import FooterSection from "./FooterSection";
@@ -12,7 +12,7 @@ import { useNavigate, useLocation } from 'react-router-dom';
 
 const navigationLinks = [
   { name: "Home", href: "/" },
-  { name: "Collections", href: "/collection" },
+  { name: "Collections", href: "/collections" },
   { name: "New", href: "#" },
 ];
 
@@ -96,168 +96,119 @@ useEffect(() => {
     navigate("/signin");
   };
 
+  const scrollToTop = () => {
+    window.scrollTo({
+      top: 0,
+      behavior: 'smooth' // 부드러운 스크롤 효과
+    });
+  };
+
+  // 기존의 홈 버튼 클릭 핸들러 수정
+  const handleHomeClick = () => {
+    navigate("/");
+    // 페이지가 전환된 후 스크롤을 맨 위로 이동
+    setTimeout(scrollToTop, 0);
+  };
+
   return (
-    <div className="bg-white flex flex-row justify-center w-full font-sans">
-      <div className="bg-white overflow-hidden w-full max-w-[1920px] relative">
-        {/* Header and Navigation */}
-        <header className="w-full pt-1 px-[69px] relative">
-          <div className="flex justify-between items-center">
-            <div className="flex items-center">
-              <img src="/icon-1.png" alt="Logo" className="w-52 h-52" />
+    <div className="min-h-screen bg-gray-50">
+      {/* 상단 네비게이션 바 */}
+      <header className="bg-white border-b border-gray-200 fixed top-0 w-full z-10">
+        <div className="max-w-5xl mx-auto px-4 flex justify-between items-center h-14">
+          {/* 로고 */}
+          <div className="text-xl font-semibold">AI 코디 추천</div>
 
-              <div className="ml-14 flex space-x-[87px] text-lg font-semibold">
-                {navigationLinks.map((link, index) => (
-                  <a
-                    key={index}
-                    href={link.href}
-                    className="text-black hover:underline tracking-wide"
-                  >
-                    {link.name}
-                  </a>
-                ))}
-              </div>
-            </div>
-
-            <div className="flex items-center space-x-[42px]">
-              <Button
-                onClick={goCart}
-                variant="default"
-                size="icon"
-                className="w-[50px] h-[50px] rounded-[25px] bg-black"
-              >
-                <ShoppingBag className="h-[28px] w-[28px] text-white" />
-              </Button>
-
-              <Button
-                onClick={goUserPage}
-                variant="default"
-                size="icon"
-                className="w-[50px] h-[50px] rounded-[25px] bg-black"
-              >
-                <div className="relative w-[40px] h-[40px] bg-white rounded-[18.52px] flex items-center justify-center">
-                  <User className="h-7 w-7 text-black" />
-                </div>
-              </Button>
-
-              {isLoggedIn ? (
-                <Button
-                  onClick={handleLogout}
-                  variant="default"
-                  size="icon"
-                  className="w-[50px] h-[50px] rounded-[25px] bg-black"
-                >
-                  <LogOut className="h-[30px] w-[30px] text-white" />
-                </Button>
-              ) : (
-                <Button
-                  onClick={goSignIn}
-                  variant="default"
-                  size="icon"
-                  className="w-[50px] h-[50px] rounded-[25px] bg-black"
-                >
-                  <LogIn className="h-[30px] w-[30px] text-white" />
-                </Button>
-              )}
-            </div>
+          {/* 검색 바 */}
+          <div className="hidden md:flex items-center bg-gray-50 rounded-md px-3 py-1.5 w-64">
+            <Search className="h-4 w-4 text-gray-400 mr-2" />
+            <input
+              type="text"
+              placeholder="검색"
+              className="bg-transparent border-none focus:outline-none text-sm w-full"
+            />
           </div>
 
-          {/* NEW COLLECTION 섹션 */}
-          <section className="flex flex-col lg:flex-row justify-center items-start mt-[200px] max-w-[1400px] mx-auto gap-16 px-4">
-            <div className="flex flex-col space-y-8 max-w-[400px]">
-              <div className="w-full">
-                <div className="relative w-full">
-                  <Input
-                    className="h-[60px] bg-[#d9d9d9] rounded-sm pl-12 pr-4 text-sm tracking-wide"
-                    placeholder="Search"
-                  />
-                  <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 h-4 w-4 text-black" />
-                </div>
-              </div>
+          {/* 네비게이션 아이콘들 */}
+          <div className="flex items-center space-x-6">
+            <Button variant="ghost" className="flex-col h-auto p-2 min-w-[60px]" onClick={handleHomeClick}>
+              <HomeIcon className="h-5 w-5" />
+              <span className="text-xs mt-1">홈</span>
+            </Button>
+            
+            {isLoggedIn && (
+              <Button variant="ghost" className="flex-col h-auto p-2 min-w-[60px]" onClick={goUserPage}>
+                <User className="h-5 w-5" />
+                <span className="text-xs mt-1">마이페이지</span>
+              </Button>
+            )}
+            
+            <Button variant="ghost" className="flex-col h-auto p-2 min-w-[60px]" onClick={() => navigate("/collections")}>
+              <Compass className="h-5 w-5" />
+              <span className="text-xs mt-1">탐색</span>
+            </Button>
+            
+            {isLoggedIn ? (
+              <Button variant="ghost" className="flex-col h-auto p-2 min-w-[60px]" onClick={handleLogout}>
+                <LogOut className="h-5 w-5" />
+                <span className="text-xs mt-1">로그아웃</span>
+              </Button>
+            ) : (
+              <Button variant="ghost" className="flex-col h-auto p-2 min-w-[60px]" onClick={goSignIn}>
+                <LogIn className="h-5 w-5" />
+                <span className="text-xs mt-1">로그인</span>
+              </Button>
+            )}
+          </div>
+        </div>
+      </header>
 
-              <div className="text-base font-medium text-black tracking-wide space-y-1">
-                {categoryLinks.map((link, index) => (
-                  <div key={index}>
-                    <a href={link.href}>{link.name}</a>
-                  </div>
-                ))}
-              </div>
+      <main className="pt-16 pb-16">
+        {/* 기존 컨텐츠를 유지하면서 스타일만 조정 */}
+        <div className="max-w-5xl mx-auto px-4">
+          {/* 스토리 섹션 */}
+          
+          
 
-              <div>
-                <h2 className="text-5xl font-bold leading-[75px] text-black tracking-wide ">
-                  NEW<br />COLLECTION
-                </h2>
-                <p className="mt-10 text-lg text-black tracking-wide">
-                  Spring 2025
-                </p>
-              </div>
-
-              <div className="flex items-center space-x-4">
-                <Button
-                  onClick={handleReadMore}
-                  className="w-[225px] h-12 bg-black text-white text-base rounded-none"
-                >
-                  Read More
-                </Button>
-                <Button variant="outline" size="icon" className="w-12 h-12 border border-[#a2a2a2]">
-                  &lt;
-                </Button>
-                <Button variant="outline" size="icon" className="w-12 h-12 border border-[#a2a2a2]">
-                  &gt;
-                </Button>
-              </div>
-            </div>
-
-            <div className="flex space-x-8">
-              <img
-                src="/image-36.png"
-                alt="Fashion model"
-                className="w-[500px] h-[500px] object-cover"
-              />
-              <img
-                src="/image-35.png"
-                alt="Fashion model"
-                className="w-[500px] h-[500px] object-cover"
-              />
-            </div>
-          </section>
-        </header>
-
-        <main className="w-full">
-          <section className="mt-[100px] ">
+          {/* 기존 컨텐츠 */}
+          <section className="mb-8">
             <DesignApproachSection />
           </section>
 
-          <section className="mt-[100px]">
-          <h2 className="text-5xl font-bold leading-[75px] text-black tracking-wide ml-8">
-                My<br /> COLLECTION
-                </h2>
-          <CollectionSection />
+          <section className="mb-8">
+            <h2 className="text-3xl font-bold mb-4">My COLLECTION</h2>
+            <CollectionSection />
           </section>
 
-          <section className="px-[69px] mt-[50px]">
-            <div className="flex justify-center items-center gap-6">
-              {["55", "56", "2", "57", "5"].map((img, idx) => (
-                <img
-                  key={idx}
-                  src={`/image-${img}.png`}
-                  alt={`Fashion model ${idx}`}
-                  className="w-[250px] h-[350px] object-cover shadow-lg"
-                />
-              ))}
-            </div>
+          {/* 기타 섹션들... */}
+        </div>
+      </main>
 
-            <div className="text-center mt-8">
-              <h2 className="text-3xl font-bold uppercase tracking-[2px]">OUR APPROACH TO FASHION DESIGN</h2>
-              <p className="mt-4 text-gray-500 max-w-3xl mx-auto">
-                at elegant vogue, we blend creativity with craftsmanship to create fashion that transcends trends and stands the test of time. each design is meticulously crafted, ensuring the highest quality exquisite finish
-              </p>
-            </div>
-          </section>
-        </main>
-
-        <footer className="mt-[100px] w-full">
-          <FooterSection />
-        </footer>
+      {/* 모바일 하단 네비게이션 바 */}
+      <div className="md:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 flex justify-around py-2">
+        <Button variant="ghost" className="flex-col h-auto p-2" onClick={() => navigate("/")}>
+          <HomeIcon className="h-6 w-6" />
+          <span className="text-[10px] mt-0.5">홈</span>
+        </Button>
+        <Button variant="ghost" className="flex-col h-auto p-2">
+          <Search className="h-6 w-6" />
+          <span className="text-[10px] mt-0.5">검색</span>
+        </Button>
+        <Button variant="ghost" className="flex-col h-auto p-2">
+          <PlusSquare className="h-6 w-6" />
+          <span className="text-[10px] mt-0.5">추가</span>
+        </Button>
+        <Button variant="ghost" className="flex-col h-auto p-2" onClick={goCart}>
+          <ShoppingBag className="h-6 w-6" />
+          <span className="text-[10px] mt-0.5">장바구니</span>
+        </Button>
+        <Button 
+          variant="ghost" 
+          className="flex-col h-auto p-2" 
+          onClick={isLoggedIn ? goUserPage : goSignIn}
+        >
+          <User className="h-6 w-6" />
+          <span className="text-[10px] mt-0.5">{isLoggedIn ? "마이페이지" : "로그인"}</span>
+        </Button>
       </div>
     </div>
   );

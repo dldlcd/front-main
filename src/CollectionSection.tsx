@@ -26,7 +26,7 @@ const topProducts: Outfit[] = [
 ];
 
 export default function CollectionSection({ className }: CollectionSectionProps) {
-  const [outfits, setOutfits] = useState<Outfit[]>(topProducts);
+  const [outfits, setOutfits] = useState<Outfit[]>([]);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -49,11 +49,7 @@ export default function CollectionSection({ className }: CollectionSectionProps)
       })
       .then((data) => {
         console.log("✅ 로그인 상태: outfits 데이터 수신", data);
-        if (data.length > 0) {
-          setOutfits(data); // 서버에 데이터 있으면 교체
-        } else {
-          setOutfits(topProducts); // 데이터 없으면 기본 이미지로
-        }
+        setOutfits(data);
       })
       .catch((err) => {
         console.error("추천 데이터 불러오는 중 오류 발생:", err);
@@ -63,30 +59,52 @@ export default function CollectionSection({ className }: CollectionSectionProps)
 
   return (
     <section className={`w-full max-w-[1600px] mx-auto py-8 ${className || ""}`}>
-      <div className="overflow-x-auto">
-        <div className="flex gap-4">
-          {outfits.map((outfit) => (
-            <div key={outfit.id} className="min-w-[18rem] border rounded-lg shadow-md overflow-hidden">
-              <Card className="border-none shadow-none">
-                <CardContent className="p-0">
-                <img
-                onClick={() => navigate(`/outfit/${outfit.id}`)}
-                    src={
-                      `http://localhost:8080${outfit.imageUrl}` 
-                    }
-                    alt="Outfit"
-                    className="w-full h-60 object-cover"
-                  />
-                  <div className="p-3 text-sm text-gray-700 font-light border-t border-gray-200 flex justify-between items-center">
-                    <span>{outfit.description}</span>
-                    <span className="text-xs text-gray-500 ml-2"> </span>
-                  </div>
-                </CardContent>
-              </Card>
-            </div>
-          ))}
+      {outfits.length === 0 ? (
+        <div className="w-full flex flex-col items-center justify-center py-16 text-center text-gray-400">
+            <svg
+              
+              className="h-16 w-16 mb-4 text-gray-300"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+              strokeWidth={1.2}
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                d="M3 7l9 6 9-6M4 19h16M4 15h16"
+              />
+            </svg>
+            <h2 className="text-lg font-semibold text-gray-500 mb-2">게시물이 없습니다</h2>
+            <p className="text-sm text-gray-400">
+              나만의 첫 코디를 등록해보세요 ✨
+            </p>
         </div>
-      </div>
+      
+      ) : (
+        <div className="overflow-x-auto">
+          <div className="flex gap-4">
+            {outfits.map((outfit) => (
+              <div key={outfit.id} className="min-w-[18rem] border rounded-lg shadow-md overflow-hidden">
+                <Card className="border-none shadow-none">
+                  <CardContent className="p-0">
+                    <img
+                      onClick={() => navigate(`/outfit/${outfit.id}`)}
+                      src={`http://localhost:8080${outfit.imageUrl}`}
+                      alt="Outfit"
+                      className="w-full h-60 object-cover"
+                    />
+                    <div className="p-3 text-sm text-gray-700 font-light border-t border-gray-200 flex justify-between items-center">
+                      <span>{outfit.description}</span>
+                    </div>
+                  </CardContent>
+                </Card>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
     </section>
   );
 }

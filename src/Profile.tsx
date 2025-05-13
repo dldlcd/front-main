@@ -1,56 +1,46 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState, React } from "react";
+import { useNavigate } from "react-router-dom";
 
-interface Profile {
-  nickname: string;
-  gender: string;
-  ageGroup: string;
-  bodyType: string;
-  preferredStyles: string[];
-  profileImage: string;
-  bio: string;
+interface ProfileProps {
+  profile: {
+    id: number;
+    nickname: string;
+    gender: string;
+    ageGroup: string;
+    bodyType: string;
+    preferredStyles: string[];
+    profileImage: string;
+    bio: string;
+  };
+  
 }
 
-const MyProfile: React.FC = () => {
-  const [profile, setProfile] = useState<Profile[]>([]);
+const MyProfile: React.FC<ProfileProps> = ({ profile }) => {
+  const navigate = useNavigate();
 
-  // ✅ 마이페이지처럼 fetchProfile 함수로 분리
-  const fetchProfile = async () => {
-    const token = localStorage.getItem("token");
-    if (!token) return;
-
-    try {
-      const res = await fetch("http://localhost:8080/api/auth/profile", {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-        credentials: "include",
-      });
-
-      if (!res.ok) throw new Error("프로필 로딩 실패");
-
-      const data = await res.json();
-      setProfile(data);
-    } catch (err) {
-      console.error("❌ 프로필 불러오기 실패:", err);
-    }
-  };
+  const [myId, setMyId] = useState<string | null>(null);
 
   useEffect(() => {
-    fetchProfile();
+    const token = localStorage.getItem("token");
+    if (!token) return;
+  
+    fetch("http://localhost:8080/api/auth/me", {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    })
+      .then((res) => res.json())
+      .then((data) => setMyId(data.id.toString()));
   }, []);
 
-  if (!profile) return null;
-
-
-  //-----------------------------------------------
-
-  const handleImageChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
+  const handleImageChange = async (e: Event) => {
+    const input = e.target as HTMLInputElement;
+    const file = input.files?.[0];
     if (!file) return;
-  
+
     const formData = new FormData();
     formData.append("image", file);
-  
+
     try {
       const res = await fetch("http://localhost:8080/api/auth/profile/image", {
         method: "POST",
@@ -59,61 +49,83 @@ const MyProfile: React.FC = () => {
         },
         body: formData,
       });
-  
+
       if (!res.ok) throw new Error("프로필 이미지 업로드 실패");
-  
-      // 업로드 성공 → 다시 프로필 로드
-      fetchProfile();
+
+      window.location.reload(); // 업로드 후 새로고침 또는 상태 재요청
     } catch (err) {
       console.error("❌ 이미지 업로드 중 오류:", err);
     }
   };
+  
 
   return (
-    <div className="w-full max-w-xl mx-auto px--10 mb-3 py-3" >
-  <div className="flex flex-col items-center sm:items-start gap-4">
-    {/* 프로필 상단 */}
-    <div className="flex items-center gap-4">
-          <input
-        type="file"
-        id="fileInput"
-        accept="image/*"
-        style={{ display: "none" }}
-        onChange={handleImageChange}
-      />
-
-      {/* 이미지를 클릭하면 input 활성화됨 */}
-      <label htmlFor="fileInput" className="cursor-pointer">
-        <img
-          src={`http://localhost:8080${profile.profileImage}`}
-          alt="Profile"
-          className="w-20 h-20 rounded-full object-cover border border-gray-300"
-        />
-      </label>
-
-      <div>
-        <div className="flex items-center gap-1">
-          <h2 className="text-lg font-bold ">{profile.nickname}</h2>
-          
+    <div className="w-full">
+      <div className="flex flex-col gap-4">
+        {/* 프로필 상단 */}
+        <div className="fixed top-0 left-0 right-0 max-w-[650px] mx-auto bg-white border-b z-50 shadow-sm">
+          <div className="p-4">
+            <div className="flex items-center gap-3">
+            
+              <button
+                onClick={() => navigate(-1)}
+                className="text-xl w-8 h-8 flex items-center justify-center hover:bg-gray-100 rounded-full transition-colors"
+              >
+                ←
+              </button>
+            
+            </div>
+            
+          </div>
         </div>
-        <p className="text-sm text-gray-600">{profile.ageGroup}  {profile.bodyType} </p>
+
+        <div className="flex items-center gap-4">
+          <div className="h-4"></div>
+
+          <div className="pl-0 pr-0 pt-24 pb-2">
+            <div className="flex items-center gap-6">
+              <div className="relative">
+                <img
+                  src={`http://localhost:8080${profile.profileImage}`}
+                  alt="profile"
+                  className="w-24 h-24 rounded-full object-cover border-2 border-white shadow-md"
+                />
+                {String(profile.id) === myId && (
+                <button 
+                  className="absolute -bottom-1 right-1 bg-black text-white rounded-full w-7 h-7 flex items-center justify-center shadow-md hover:bg-blue-600 transition-colors text-sm"
+                  onClick={() => {
+                    // 프로필 이미지 변경 로직
+                    const fileInput = document.createElement('input');
+                    fileInput.type = 'file';
+                    fileInput.accept = 'image/*';
+                    fileInput.onchange = (e) => handleImageChange(e);
+                    fileInput.click();
+                  }}
+                >
+                  <span className="text-base">+</span>
+                </button>
+                )}
+              </div>
+              <div>
+                <h2 className="text-xl font-bold ">{profile.nickname}</h2>
+                <p className="text-gray-600">
+                  {profile.ageGroup} • {profile.bodyType}
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* 하단 정보 */}
+        <div className="w-full text-sm text-gray-700 space-y-0 mb-1 pl-5">
+          <p>💪 {profile.bodyType}</p>
+          <p>
+            👕 {profile.preferredStyles ? profile.preferredStyles.join(", ") : ""}
+          </p>
+          <p>💬 {profile.bio}</p>
+        </div>
       </div>
     </div>
-
-    {/* 하단 정보 */}
-    <div className="w-full text-sm text-gray-700 space-y-1 mt-1 ">
-      <p>💪 {profile.bodyType}</p>
-      <p>
-      👕 {profile.preferredStyles ? profile.preferredStyles.join(", ") : ""}
-    </p>
-
-      <p>💬  {profile.bio}</p>
-    </div>
-
-    
-  </div>
-</div>
-
   );
 };
 

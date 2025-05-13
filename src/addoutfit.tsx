@@ -39,7 +39,7 @@ formData.append("upload_time", now);
       .then((res) => {
         if (!res.ok) throw new Error("업로드 실패");
         alert("코디가 등록되었습니다!");
-        navigate("/mypage");
+        navigate(-1);
       })
       .catch((err) => {
         console.error("업로드 중 오류:", err);

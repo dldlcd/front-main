@@ -47,7 +47,7 @@ export default function SignIn() {
           <Menu className="w-6 h-6 md:w-8 md:h-8" />
           <nav className="flex gap-6 md:gap-8 text-sm md:text-base font-semibold tracking-wide">
             <button onClick={() => navigate("/")} className="hover:underline">Home</button>
-            <button onClick={() => navigate("/collection")} className="hover:underline">Collections</button>
+            <button onClick={() => navigate("/collections")} className="hover:underline">Collections</button>
             <a href="#" className="hover:underline">Deals</a>
           </nav>
         </div>
